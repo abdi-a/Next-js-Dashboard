@@ -2,9 +2,9 @@
 
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { type SignUpFormValues, SignUpSchema } from "@/lib/types";
-import { hash } from "bcryptjs";
-import { createSession } from "@/lib/session";
+import { type SignUpFormValues, SignUpSchema, SignInSchema } from "@/lib/types";
+import { hash, compare } from "bcryptjs";
+import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export async function signup(prevState: any, formData: FormData) {
@@ -47,4 +47,47 @@ export async function signup(prevState: any, formData: FormData) {
   await createSession(user.id);
 
   redirect("/dashboard");
+}
+
+export async function signin(prevState: any, formData: FormData) {
+  const result = SignInSchema.safeParse(Object.fromEntries(formData));
+
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+  const { email, password } = result.data;
+
+  const user = await db.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    return {
+      errors: {
+        email: ["Invalid email or password"],
+      },
+    };
+  }
+
+  const validPassword = await compare(password, user.password);
+
+  if (!validPassword) {
+    return {
+      errors: {
+        email: ["Invalid email or password"],
+      },
+    };
+  }
+
+  await createSession(user.id);
+
+  redirect("/dashboard");
+}
+
+export async function logout() {
+  await deleteSession();
+  redirect("/sign-in");
 }

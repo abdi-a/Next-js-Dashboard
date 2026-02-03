@@ -1,28 +1,25 @@
+import { SignInForm } from "./form";
 import Link from "next/link";
 
-function SignUpForm() {
-  return <div className="p-4 border rounded text-center text-gray-500">Sign Up Form Placeholder</div>;
-}
-
-export default function SignUpPage() {
+export default function SignInPage() {
   return (
     <div className="flex flex-col space-y-2 text-center">
       <h1 className="text-2xl font-semibold tracking-tight">
-        Create an account
+        Sign in to your account
       </h1>
       <p className="text-sm text-gray-500">
-        Enter your email below to create your account
+        Enter your email below to sign in
       </p>
       <div className="mt-6">
-        <SignUpForm />
+        <SignInForm />
       </div>
       <p className="px-8 text-center text-sm text-gray-500 mt-4">
-        Already have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link
-          href="/sign-in"
+          href="/sign-up"
           className="underline underline-offset-4 hover:text-primary"
         >
-          Sign In
+          Sign Up
         </Link>
       </p>
     </div>
